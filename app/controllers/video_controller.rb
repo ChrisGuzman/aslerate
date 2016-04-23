@@ -3,17 +3,21 @@ class VideoController < ApplicationController
   def index
     words = asl_params["words"] || ""
     scrub_words = words.gsub(/[^A-Za-z ]/, '')
-    puts scrub_words
+    puts "words are #{scrub_words}"
     # puts `pwd && bin/stitcher.sh`
-    puts `"bash stitcher.sh #{scrub_words}"`
-    cmd = "bash stitcher.sh #{scrub_words}"
+    # puts `"bash stitcher.sh #{scrub_words}"`
+    cmd = "./stitcher.sh '#{scrub_words}'"
     # cmd = "echo '#{scrub_words}'"
     if  words.present? && system("#{cmd}")
-      file = File.join(Rails.root, "final.mp4")
-      send_file file, type: "video/mp4", disposition: 'inline'
+      render plain: view_url
     else
       render plain: "Couldn't parse that"
     end
+  end
+
+  def view
+    file = File.join(Rails.root, "final.mp4")
+    send_file file, type: "video/mp4", disposition: 'inline'
   end
 
   private
